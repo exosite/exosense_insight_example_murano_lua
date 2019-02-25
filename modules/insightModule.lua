@@ -15,3 +15,19 @@ function insightModule.addNumbers(body)
   end
   return dataOUT
 end
+
+function insightModule.addSquareNumber(body)
+  local dataIN = body.data
+  local constants = body.args.constants
+  dataOUT = {}
+
+-- dataIN is a list of datapoints
+  for _, dp in pairs(dataIN) do
+
+    -- Each signal value in dataOUT should keep the incoming metadata
+    dp.value = dp.value + constants.numbertobesqured * constants.numbertobesqured
+
+    table.insert(dataOUT, dp)
+  end
+  return dataOUT
+end

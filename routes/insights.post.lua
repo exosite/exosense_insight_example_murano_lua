@@ -1,4 +1,3 @@
---#ENDPOINT POST /insights
 -- listInsights
 
 local insightsByGroup = {}
@@ -28,11 +27,33 @@ local addNumber = {
   }
 }
 
-insightsByGroup["80000001"] = {addNumber}
-insightsByGroup["80000002"] = emptyList
+local addSquareNumber = {
+  id = "addSquareNumber",
+  name = "Add Square Numbers",
+  description = "Sum one data point with a squared user-defined value",
+  constants = {
+    {
+      name = "numbertobesqured",
+      type = "number"
+    }
+  },
+  inlets = {
+    {
+      data_type = "NUMBER",
+      data_unit = "",
+      description = "One number"
+    }
+  },
+  outlets = {
+    data_type = "NUMBER",
+    data_unit = ""
+  }
+}
+
+insightsByGroup["80000001"] = {addSquareNumber, addNumber}
 
 if request.body.group_id == '' then
-  insightGroup = emptyList 
+  insightGroup = {addNumber} 
 else
   insightGroup = insightsByGroup[request.body.group_id]
 end

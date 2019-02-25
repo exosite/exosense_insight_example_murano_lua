@@ -1,0 +1,35 @@
+---
+# First up is some metadata about this project.
+info:
+  # Nice short and easy. Also must be a valid domain name component.
+  name: Insight template application
+
+  # Short one line summary of this project.
+  summary: An insight template application including sample insight function
+
+  # Longer, multiple paragraph explanation.
+  description: |
+    An application template to stage as a placeholder for a locked solution while the full
+    locked solution is setup and configure for each unique install instance.
+
+  # Who made this
+  authors: ["henrylo@exosite.com"]
+
+  # The version of the Project
+  version: 1.0.0
+
+services: # Also applies for service configuration using .yaml format.
+  location: services
+  include: '**/*.lua'
+  exclude: ['*_test.lua', '*_spec.lua']
+
+modules:
+  location: modules
+  include: '**/*.lua'
+
+endpoints:
+  location: routes
+  include: '**/*.lua'
+
+# The format version of this file. This is required.
+formatversion: 1.0.0

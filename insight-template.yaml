@@ -26,6 +26,8 @@ produces:
 paths:
   /info:
     get:
+      tags:
+        - insight
       operationId: info
       description: Get some info about this Insight
       responses:
@@ -40,6 +42,8 @@ paths:
 
   /insights:
     post:
+      tags:
+        - insight
       operationId: listInsights
       description: Get a list of availible Insight Functions and info about them
       parameters:
@@ -61,6 +65,8 @@ paths:
 
   /insight/{function_id}:
     get:
+      tags:
+        - insight
       operationId: infoInsight
       description: Get info about one Insight Function
       responses:
@@ -75,6 +81,8 @@ paths:
 
   /lifecycle:
     post:
+      tags:
+        - insight
       operationId: lifecycle
       description: |
         Notifications of when a linkage that will call the process function is created or deleted.
@@ -91,6 +99,8 @@ paths:
 
   /process: # The acutal path can be anything.
     post:
+      tags:
+        - insight
       operationId: process
       description: |
         Your function to process a bunch of Signal Data.
@@ -446,4 +456,9 @@ definitions:
       name:
         description: Error type
         type: string
-
+################################################################################
+#                                 Tags                                  #
+################################################################################
+tags:
+  - name: insight
+    description: ExoSense insight tag for api recognition
