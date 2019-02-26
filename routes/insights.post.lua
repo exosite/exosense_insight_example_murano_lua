@@ -1,4 +1,4 @@
--- listInsights
+--#ENDPOINT POST /process
 
 local insightsByGroup = {}
 local emptyList = {}
