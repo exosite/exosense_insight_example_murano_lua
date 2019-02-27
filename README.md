@@ -161,7 +161,7 @@ or use [defunkt/gist](https://github.com/defunkt/gist)
 
 * In Murano, go to IoT Marketplace and click on Publish on the left
 * Parameters:
-  * Element name: *must* begin with "Insight" (e.g. "Insight Demo 01")
+  * Element name: A proper name (e.g. "Insight Demo 01")
   * Element type: Service
   * Configuration File URL: the URL from your Gist (make sure to copy the URL
     from the "raw" view)
