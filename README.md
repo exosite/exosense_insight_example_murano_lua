@@ -27,7 +27,7 @@ Fundamentally, all Insights are:
 ### Exchange Elements
 
 * From the ExoSense and Murano perspective, an Insight is an
-  IoT Exchange Service that begins with the word "Insight".
+  IoT Exchange Service that provides specific endpoints with the tag "insight" defined in swagger.
 * The Swagger definition for the Service is found in this repository:
   [insight-template.yaml](./insight-template.yaml). Use
   [swagger.io](https://editor.swagger.io/) to view the incoming and outgoing
