@@ -1,4 +1,5 @@
---#ENDPOINT POST /process
+--#ENDPOINT POST /insights
+-- insight information
 
 local insightsByGroup = {}
 local emptyList = {}
