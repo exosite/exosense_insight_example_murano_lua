@@ -26,8 +26,12 @@ Fundamentally, all Insights are:
 
 ### Exchange Elements
 
-* From the ExoSense and Murano perspective, an Insight is an
-  IoT Exchange Service that begins with the word "Insight".
+* From the ExoSense and Murano perspective, an Insight is an ExoSense specific service and must use the element tag  `insight`in the swagger defintion.
+    ```yaml
+    tags:
+      - name: insight
+        description: Insight Module
+    ```
 * The Swagger definition for the Service is found in this repository:
   [insight-template.yaml](./insight-template.yaml). Use
   [swagger.io](https://editor.swagger.io/) to view the incoming and outgoing
@@ -127,14 +131,23 @@ info:
   version: "1.0"
   title: My Demo Insight
   description: |
-    This demo Insight is a Functional Module that can be added to Murano Exchange
-    and enabled within ExoSense.
+    This demo Insight is a Functional Module that can be publsihed in Exosite's IoT Exchange
+    and used within ExoSense.
   contact:
-    name: Stephen Dedalus
-    email: sdedalus@clongowes.edu
+    name: Your Name Here
+    email: YOU@BIZ.com
 
-host: mydemoinsight.apps.exosite.io # Set this to the host your function is on
+host: mydemoinsight.apps.exosite.io # Set this to the host your function is on (Example Custom Murano Hosted App Service, AWS, etc)
 basePath: / # Set this or the path according to your function
+tags:
+  - name: insight
+    description: Insight Module
+schemes:
+  - https  # Only https is supported.
+consumes:
+  - application/json # Only JSON is supported.
+produces:
+  - application/json # Only JSON is supported.
 
 [...]
 ```
@@ -157,13 +170,14 @@ or use [defunkt/gist](https://github.com/defunkt/gist)
 1. Create the following Module with the code in examples/murano/modules
     * `insightModule`
 
-#### Exchange Service
+#### Exchange Service Element
 
 * In Murano, go to IoT Marketplace and click on Publish on the left
 * Parameters:
-  * Element name: *must* begin with "Insight" (e.g. "Insight Demo 01")
+  * Element name: Recommend including 'Insight' in the name.
   * Element type: Service
-  * Configuration File URL: the URL from your Gist (make sure to copy the URL
+  * Element Variation: ExoSense Insight
+  * Configuration File (YAML) URL: the URL from your public Gist (make sure to copy the URL
     from the "raw" view)
   * ... (fill the rest out as you see fit)
 
