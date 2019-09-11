@@ -17,14 +17,12 @@ local addNumber = {
   },
   inlets = {
     {
-      data_type = "NUMBER",
-      data_unit = "",
+      primitive_type = "NUMERIC",
       description = "One number"
     }
   },
   outlets = {
-    data_type = "NUMBER",
-    data_unit = ""
+    primitive_type = "NUMERIC",
   }
 }
 
@@ -40,14 +38,12 @@ local addSquareNumber = {
   },
   inlets = {
     {
-      data_type = "NUMBER",
-      data_unit = "",
+      primitive_type = "NUMERIC",
       description = "One number"
     }
   },
   outlets = {
-    data_type = "NUMBER",
-    data_unit = ""
+    primitive_type = "NUMERIC",
   }
 }
 
