@@ -2,11 +2,9 @@ swagger: "2.0"
 
 info:
   version: "1.0"
-  title: My Nifty Insight
+  title: My Simple Insight
   description: |
-    This describes an Insight Module that can be added to Murano Exchange.  An Insight Module can
-    implement one or more Insight Functions.  These Insight Functions can then be added to Assets
-    as a Transformation.
+    This is a simple insight that we use for testing data flow.
   contact:
     name: Your Name Here
     email: YOU@BIZ.com
@@ -44,11 +42,11 @@ paths:
   /insights:
     post:
       operationId: listInsights
-      description: Get a list of availible Insight Functions and info about them
+      description: Get a list of available Insight Functions and info about them
       parameters:
       - name: body
         in: body
-        description: Get a list of availible insight functions
+        description: Get a list of available insight functions
         required: true
         schema:
           $ref: '#/definitions/InsightsFilterParams'

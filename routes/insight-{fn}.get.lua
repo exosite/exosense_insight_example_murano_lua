@@ -1,7 +1,5 @@
 --#ENDPOINT GET /insight/{fn}
+-- luacheck: globals response request
 -- infoInsight
 
--- NOT YET IMPLEMENTED
-
-local functionId = request.parameters.fn
-return
+return require('insight').infoInsight(request)

@@ -1,9 +1,4 @@
 --#ENDPOINT GET /info
--- info
+-- luacheck: globals response request
 
-return {
-  name = "My Demo Insight",
-  decription = "This is a demo ExoSense Insight",
-  -- Currently, group_id_required=false is not supported in the ExoSense UI
-  group_id_required = true
-}
+return require('insight').info()
