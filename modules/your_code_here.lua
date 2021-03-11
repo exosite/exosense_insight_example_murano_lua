@@ -98,3 +98,34 @@ I.add('bungle', {
     end
   end
 })
+
+I.add_group('priadder', 'BR-009', {
+  name = "The Private Adder",
+  description = "Adds a value to the signal",
+  constants = {
+    {
+      name = "value",
+      description = "A number",
+      type = I.constant_types.NUMBER,
+    },
+  },
+  inlets = {
+    {
+      name = 'Signal',
+      description = 'The signal to add value to',
+      tag = 'A',
+      primitive_type = I.primitives.NUMERIC,
+      data_type = {'NUMBER', 'TEMPERATURE'},
+    }
+  },
+  outlets = {
+      {
+      name = 'Increased',
+      description = 'The value added result',
+      primitive_type = I.primitives.NUMERIC,
+    }
+  },
+  fn = function(value, constants)
+    return value + constants.value
+  end
+})

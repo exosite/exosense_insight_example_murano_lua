@@ -46,7 +46,6 @@ function Insight.meta(info)
   end
 
   local overrides = {
-    group_id_required = false,
     wants_lifecycle_events = false,
   }
 
@@ -59,6 +58,10 @@ end
 
 
 function Insight.add(function_id, function_details)
+  Insight.add_group(function_id, '*', function_details)
+end
+
+function Insight.add_group(function_id, group_id, function_details)
   -- oh lua; make sure arrays are arrays for to_json
   for _,k in pairs({'constants', 'inlets', 'outlets'}) do
     if function_details[k] then
@@ -67,13 +70,17 @@ function Insight.add(function_id, function_details)
       function_details[k] = setmetatable({}, {['__type']='slice'})
     end
   end
-  Insight._functions[function_id] = function_details
 
-  -- OR? Insight.add_group(function_id, '*', function_details)
+  if Insight._functions[group_id] == nil then
+    Insight._functions[group_id] = {}
+  end
+
+  Insight._functions[group_id][function_id] = function_details
+
+  if group_id ~= '*' and not (Insight._meta_info or {}).group_id_required then
+    Insight._meta_info.group_id_required = true
+  end
 end
-
--- function Insight.add_group(function_id, group_id, function_details)
--- end
 
 -- --------------------------------------------------------------------------------------------------
 -- These functions are used by the REST Interface.
@@ -86,10 +93,18 @@ end
 function Insight.listInsights(request)
   log.debug(to_json(request))
   local insights = {}
-  for k,v in pairs(Insight._functions) do
+  for k,v in pairs(Insight._functions['*']) do
     v.fn = nil
     v.id = k
     table.insert(insights, v)
+  end
+  local gid = (request.body or {}).group_id
+  if gid and Insight._functions[gid] then
+    for k,v in pairs(Insight._functions[gid]) do
+      v.fn = nil
+      v.id = k
+      table.insert(insights, v)
+    end
   end
   return {
     total = #insights,
@@ -101,7 +116,7 @@ end
 function Insight.infoInsight(request)
   log.debug(to_json(request))
   local fin = (request.parameters or {}).fn
-  local found = Insight._functions[fin]
+  local found = Insight._functions['*'][fin]
   if found == nil then
     return nil, {
       name='Not Implemented',
@@ -243,8 +258,9 @@ end
 function Insight.process(request)
   log.debug(to_json(request))
   -- Maybe group_id support.
+  local gid = (request.args or {}).group_id or '*'
   local fid = (request.args or {}).function_id
-  local found = Insight._functions[fid]
+  local found = Insight._functions[gid][fid]
   if found == nil then
     return nil, {
       name='Not Implemented',
