@@ -1,5 +1,7 @@
 ---
--- FIXME: Explain what this file is and why they should not edit it.
+-- This is all of the deep a gory details of making an Insight Module work.
+-- Feel free to look around.
+-- Avoid making changes here unless you know what you're up to. (or just willing to take the risks)
 
 local Insight = {}
 
@@ -32,9 +34,11 @@ Insight.constant_types = {
 function Insight.meta(info)
   local final = {
     name = 'Unnamed Insight',
-    group_id_required = false,
     description = 'Someone forgot to configure their module',
+    group_id_required = false,
     wants_lifecycle_events = false,
+    author = "Your Name Here",
+    author_contact = "your@email.address.here",
   }
 
   for k,v in pairs(info) do

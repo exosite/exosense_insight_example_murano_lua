@@ -1,15 +1,25 @@
+--#ENDPOINT GET /interface
+local I = require('insight')
+local subs = {}
+for k,v in pairs(Config.solution()) do
+  subs[k] = v
+end
+for k,v in pairs(I.info()) do
+  subs[k] = v
+end
+
+return string.gsub([===[
 swagger: "2.0"
 
 info:
   version: "1.0"
-  title: My Simple Insight
-  description: |
-    This is a simple insight that we use for testing data flow.
+  title: &name&
+  description: "&description&"
   contact:
-    name: Your Name Here
-    email: YOU@BIZ.com
+    name: &author&
+    email: &author_contact&
 
-host: simpleinsightmodule.apps.exosite-staging.io
+host: &domain&
 basePath: / # Set this or the path according to your function
 tags:
   - name: insight
@@ -64,6 +74,11 @@ paths:
     get:
       operationId: infoInsight
       description: Get info about one Insight Function
+      parameters:
+        - name: function_id
+          type: string
+          in: path
+          description: Identifier of function
       responses:
         "200":
           description: Insight Functions successfully listed
@@ -132,12 +147,25 @@ definitions:
         description: Presented name
       description:
         type: string
-        description: Additional text about this insight
+        description: Additional text about this insight. Markdown can be used.
       wants_lifecycle_events:
         type: boolean
         description: |
           True if this insight wants to be notified when linkages using it are created and deleted.
           Defaults to false.
+      translations:
+        type: object
+        description: Translations of the name and description fields
+        additionalProperties:
+          type: object
+          description: Keyed by each translated language code
+          properties:
+            name:
+              type: string
+              description: Presented name
+            description:
+              type: string
+              description: Additional text about this insight. Markdown can be used.
     required: [group_id_required]
 
   InsightsFilterParams:
@@ -159,39 +187,101 @@ definitions:
 
   SignalTypeInputInfo:
     type: object
-    description: What data type the incoming Signal must have. If omitted, than allows any type.
-    required: [data_type, name]
+    description: |
+      What data type the incoming Signal must have.  One of `primitive_type`, `data_type` or `data_unit`
+      should be specified.
+    required: [name]
     properties:
-      data_type:
+      primitive_type:
         type: string
-        description: The type that the connecting signal must have
+        enum: [NUMERIC, STRING, BOOLEAN, JSON]
+        description: If present, the primitive type that the connecting signal must have
+      data_type:
+        type: array
+        description: If present, the type that the connecting signal must have
+        items:
+          type: string
+          description: A required data type
       data_unit:
         type: array
-        description: The units that the connecting signal must have
+        description: If present, the units that the connecting signal must have
         items:
           type: string
           description: A required unit.
       tag:
         type: string
-        description: Optional tag to add to the SingalData for inlet matching
+        description: Optional tag to add to the SignalData for inlet matching
       name:
         type: string
         description: Name of this signal
       description:
         type: string
         description: Optional text to help users.
+      translations:
+        type: object
+        description: Translations of the name and description fields
+        additionalProperties:
+          type: object
+          description: Keyed by each translated language code
+          properties:
+            name:
+              type: string
+              description: Presented name
+            description:
+              type: string
+              description: Optional text to help users.
 
   SignalTypeOutputInfo:
     type: object
-    description: What data type the incoming Signal must have. If omitted, than allows any type.
+    description: |
+      What data type the incoming Signal must have.  One of `primitive_type`, `data_type` or `data_unit`
+      should be specified.
     properties:
+      primitive_type:
+        type: string
+        enum: [NUMERIC, STRING, BOOLEAN, JSON]
+        description: If present, the primitive type that the connecting signal must have
       data_type:
-        type: string
-        description: The type that the connecting signal must have
+        type: array
+        description: If present, the type that the connecting signal must have
+        items:
+          type: string
+          description: A required data type.
       data_unit:
+        type: array
+        description: If present, the unit that the connecting signal must have
+        items:
+          type: string
+          description: A required unit.
+      name:
         type: string
-        description: The unit that the connecting signal must have
-    required: [data_type]
+        description: Name of this outlet
+      description:
+        type: string
+        description: Optional text to help users.
+      suggested_name:
+        type: string
+        description: |
+          A suggestion for what to name signals that get created for this outlet.
+          This may include `{}` to indicate where to place the function name.
+      translations:
+        type: object
+        description: Translations of the name and description fields
+        additionalProperties:
+          type: object
+          description: Keyed by each translated language code 
+          properties:
+            name:
+              type: string
+              description: Presented name
+            description:
+              type: string
+              description: Optional text to help users.
+            suggested_name:
+              type: string
+              description: |
+                A suggestion for what to name signals that get created for this outlet.
+                This may include `{}` to indicate where to place the function name.
 
   ConstantInfo:
     type: object
@@ -199,26 +289,52 @@ definitions:
     properties:
       name:
         type: string
-        description: The name of this constant 
+        description: The name of this constant; This is not shown to users and is the code identifier for this constant.
       type:
         type: string
-        enum: [string, number]
+        enum: [string, number, boolean]
         description: What kind of value this constant accepts
       description:
         type: string
         description: Some words for the user about this constant
       default:
-        type: [string, number]
+        type: [string, number, boolean]
         description: Optional value to use if user doesn't specify one.
       enum:
         type: array
         description: An array of allowed values.
+      enum_presented:
+        type: array
+        description: If present, the strings to display instead of the values in `enum`.  The length of this must match `enum`.
+        items:
+          type: string
+          description: Presentable name for one value
       maximum:
         type: number
         description: For number type, the largest it can be
       minimum:
         type: number
         description: For number type, the smallest it can be
+      multiple:
+        type: boolean
+        description: |
+          When this is true, this constant will be an array of values instead of a single value.
+          The UI will present the user a way to enter this constant multiple times.
+      translations:
+        type: object
+        description: Translations of the name and description fields
+        additionalProperties:
+          type: object
+          description: Keyed by each translated language code 
+          properties:
+            description:
+              type: string
+              description: Some words for the user about this constant
+            enum_presented:
+              type: array
+              description: If present, the strings to display instead of the values in `enum`.
+              items:
+                type: string
     required: [name, type]
 
   InsightInfo:
@@ -234,23 +350,36 @@ definitions:
       description:
         type: string
         description: A description of this insight function to display to users.
+      translations:
+        type: object
+        description: Translations of the name and description fields
+        additionalProperties:
+          type: object
+          description: Keyed by each translated language code
+          properties:
+            name:
+              type: string
+              description: A human friendly name for this insight function
+            description:
+              type: string
+              description: A description of this insight function to display to users.
       type:
         type: string
         enum: [transform, rule, action]
         description: |
           What kind of insight this function is.  Determines how it gets used and how the UI
           presents it.  If omitted, then 'transform' is used.
-      asynchronous:
-        type: boolean
-        description: |
-          When true, this function requires the Callback Info block since it will respond
-          with some or all of its results asynchronously.
       history:
         type: object
         description: |
           When this object is present, a timeseries query will be called and the results sent along
           to the function call.  The properties here will be used to augment the query.  Only the
           Signals connected to the calling of this function will be queried.
+        properties:
+          include_from:
+            type: string
+            enum: [INLETS, OUTLETS, BOTH]
+            description: When fetching history, which connected signals to fetch from.  Defaults to BOTH.
         additionalProperties:
           type: object
           description: An additional parameter to the query.  Use only one property. (value, constant, template)
@@ -264,13 +393,19 @@ definitions:
             template:
               type: string
               description: |
-                Which of this function's constants to use the value of here, fitted into a templeate
+                Which of this function's constants to use the value of here, fitted into a template
                 string.  The constants must be surrounded with '{{}}'.  For example '-{{days}}d'
       constants:
         type: array
         description: Additional user specified values to pass to this insight function
         items:
           $ref: '#/definitions/ConstantInfo'
+      constants_multiple_maximum:
+        type: number
+        description: |
+          If there are constants with multiple set to true, this states the maximum number of times the
+          constants can be repeated. (The maximum size of the arrays.)
+          If unspecified then the UI can apply any limit, including none.
       inlets:
         type: array
         description: The kinds of data that can be connected. (This is an unordered set)
@@ -278,12 +413,16 @@ definitions:
         items:
           $ref: '#/definitions/SignalTypeInputInfo'
       outlets:
-        $ref: '#/definitions/SignalTypeOutputInfo'
+        type: array
+        description: What kind of data each output will produce. (This is an ordered array)
+        maxItems: 5
+        items:
+          $ref: '#/definitions/SignalTypeOutputInfo'
     required:
       - id
       - name
       - description
-  
+
   InsightListResults:
     type: object
     description: The found insight functions with count info
@@ -435,3 +574,5 @@ definitions:
         description: Error type
         type: string
 
+
+]===], '&([%w_]+)&', subs)

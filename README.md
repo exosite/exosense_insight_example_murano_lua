@@ -2,183 +2,51 @@
 
 ## Basic Concepts
 
-ExoSense™ Insights are processes that act on Asset Signals within the
+ExoSense™ Insight Modules are processes that act on Asset Signals within the
 application. They allow customers to integrate in a flexible way with a wide
 array of internal and external services to provide analytics, decision, and
-action capabilities. Correspondingly, there are three types of Insights:
+action capabilities. Correspondingly, there are two types of Insights:
 
 * Transforms
 * Rules
-* Actions
-
-Fundamentally, all Insights are:
 
 ### Streaming
+
+Fundamentally, all Insights are streaming based. This is also more widely known as an 
+[Online Algorithm](https://en.wikipedia.org/wiki/Online_algorithm).
 
 * At their core, Insights are not stateful; similar to other
   Transformations like Join and Linear Gain, they operate on a single piece of
   Signal data.
-* For a given Join on SignalA and SignalB, each time a piece of
-  data comes in from _either_ of those Signals, the Join runs (and returns a
-  joined value).
-* The Join Transform uses the last seen value of any Signal not
-  present in the data sent to the Join at any given time.
+* For a given function on multiple signals, such as: SignalA and SignalB, each time a piece of
+  data comes in from _either_ of those Signals, the function runs (and returns a value).
+* It is the function's responsibility to remember prior data from signals if that is
+  important for it to run.
+* This code by default retains prior values sent to an instance of a function automatically
+  to simplify the author's job of focusing on the logic and less on interfacing.
 
-### Exchange Elements
+## Creating a new Insight Module
 
-* From the ExoSense and Murano perspective, an Insight is an ExoSense specific service and must use the element tag  `insight`in the swagger defintion.
-    ```yaml
-    tags:
-      - name: insight
-        description: Insight Module
-    ```
-* The Swagger definition for the Service is found in this repository:
-  [insight-template.yaml](./insight-template.yaml). Use
-  [swagger.io](https://editor.swagger.io/) to view the incoming and outgoing
-  data format.
+### Create a new Application from Exchange
 
-### Webservers
+Goto the Exchange Template for this repo `url goes here`.
 
-* The Exchange Service created for an Insight defines the URL
-  to be requested when ExoSense needs to do any of the following:
-    * get high-level information about the Insight
-    * get a list of available functions for a group, along with their
-      required parameters
-    * get info about a specific function, along with its required parameters
-    * process incoming Signal data (i.e. "run the function")
-* This URL can be hosted anywhere, including:
-    * Murano
-    * Amazon Web Services
-    * Microsoft Azure
-    * Google Cloud Products
+Click on the `Create Application` button.
 
-### Services
+### Edit the module `your_code_here`
 
-* The code behind the Insight is entirely up to its creator; as long as it
-  conforms to the Swagger definition, ExoSense will happily send and receive
-  data from it.
-* The code that makes up an Insight can be written in any language available
-  within the chosen host.
+Click on `Modules`, then on `your_code_here`.
 
-## Enabling Within ExoSense
+Add your logic.
 
-To enable an Insight within ExoSense:
-1. Create an Asset and add Signals to that Asset.
-1. Click the [+] button next to a Signal
-1. Under "Type", select the Insight you created. The displayed name is the
-  "name" value returned by a GET /info request.
-1. Enter a valid Group ID (e.g. "80000001").
-1. Select the desired Function (e.g. "Add Numbers").
-1. Select a signal from the Input Signal 1 dropdown
-1. Supply a number to add to the chosen Signal in the Parameters section
-  (e.g. "adder")
-1. Supply a name, type, and unit for the output signal.
-1. Click save.
-
-## Requirements
-
-1. Customized Swagger file (template is
-  [insight-template.yaml](./insight-template.yaml)). The only sections that
-  should be modified are:
-    * info
-    * host
-    * basePath (in many cases the host URL is sufficient and this should be
-      left as "/")
-1. URL to that Swagger file (e.g. by using Gist, and copying the URL from the
-  "raw" view)
-1. HTTP service with correct endpoints, as defined in the
-  [insight-template.yaml](./insight-template.yaml) file.
-    * `get /info`
-
-      This endpoint is used to get high-level information about an Insight.
-      The name displayed within the ExoSense UI, the Insight description, and
-      whether or not a `group_id` is required are supplied via this endpoint.
-
-    * `get /insight/{fn}`
-
-      This endpoint is used to get all the necessary information about a
-      specific Function, including:
-        * Description
-        * Input Signals (inlets)
-        * Output Signals (outlets)
-        * User-Supplied Constants
-
-    * `post /insights`
-
-      This endpoint is used to supply a list of Functions (and their
-      info/requirements/meta-data) available to a specific Group (supplied as a
-      Group ID)
-
-    * `post /process`
-
-      This endpoint is used to process Signal data and return a new Signal(s)
-1. Exchange Service beginning with the word "Insight" and using the Swagger
-  file URL.
-1. Exchange Service added to your Business.
-1. Exchange Service added to your ExoSense Instance.
-
-## Examples
-
-### Murano Example
-
-#### Swagger File
-
-Modify the info, host, and basePath sections of the Swagger template:
-```yaml
-swagger: "2.0"
-
-info:
-  version: "1.0"
-  title: My Demo Insight
-  description: |
-    This demo Insight is a Functional Module that can be publsihed in Exosite's IoT Exchange
-    and used within ExoSense.
-  contact:
-    name: Your Name Here
-    email: YOU@BIZ.com
-
-host: mydemoinsight.apps.exosite.io # Set this to the host your function is on (Example Custom Murano Hosted App Service, AWS, etc)
-basePath: / # Set this or the path according to your function
-tags:
-  - name: insight
-    description: Insight Module
-schemes:
-  - https  # Only https is supported.
-consumes:
-  - application/json # Only JSON is supported.
-produces:
-  - application/json # Only JSON is supported.
-
-[...]
-```
-
-#### Public URL
-
-Upload via [GitHub Gist](https://gist.github.com/)
-or use [defunkt/gist](https://github.com/defunkt/gist)
-
-#### HTTP Service
-
-1. Create a Murano Application with a reasonable name (e.g. mydemoinsight)
-1. Using either Murano in a browser or with
-  [MuranoCLI](http://docs.exosite.com/development/tools/murano-cli/),
-  create the following API endpoints with the code in examples/murano/routes:
-    * `GET /info`
-    * `GET /insight/{fn}`
-    * `POST /insights`
-    * `POST /process`
-1. Create the following Module with the code in examples/murano/modules
-    * `insightModule`
-
-#### Exchange Service Element
+#### Publish Your Exchange Insight Element
 
 * In Murano, go to IoT Marketplace and click on Publish on the left
 * Parameters:
   * Element name: Recommend including 'Insight' in the name.
   * Element type: Service
   * Element Variation: ExoSense Insight
-  * Configuration File (YAML) URL: the URL from your public Gist (make sure to copy the URL
-    from the "raw" view)
+  * Configuration File (YAML) URL: https://`<`the domain of your application`>`/interface
   * ... (fill the rest out as you see fit)
 
 #### Add Insight To Business
@@ -189,5 +57,4 @@ Go to the Element you created in IoT Marketplace and add it to your Murano Busin
 
 Go to the ExoSense instance Solution in Murano, and click the orange "Enable
 Services" button at the top right. Find the Service you just created and enable
-it. Your Insight is now available to use in ExoSense! Now, all you need to do is
-[create an Insight Transormation in the ExoSense UI](#enabling-within-exosense).
+it. Your Insight is now available to use in ExoSense!

@@ -1,10 +1,10 @@
--- FIXME: Explain why this is the file to edit.
-
 local I = require('insight')
 
 I.meta({
   name = 'Simple Insight',
   description = 'Awesome if this works',
+  author = "Your Name Here",
+  author_contact = "your@email.address.here",
 })
 
 I.add('adder', {
