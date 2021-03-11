@@ -59,6 +59,14 @@ end
 
 
 function Insight.add(function_id, function_details)
+  -- oh lua; make sure arrays are arrays for to_json
+  for _,k in pairs({'constants', 'inlets', 'outlets'}) do 
+    if function_details[k] then
+      setmetatable(function_details[k], {['__type']='slice'})
+    else
+      function_details[k] = setmetatable({}, {['__type']='slice'})
+    end
+  end
   Insight._functions[function_id] = function_details
 
   -- OR? Insight.add_group(function_id, '*', function_details)

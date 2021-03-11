@@ -27,9 +27,11 @@ I.add('adder', {
     }
   },
   outlets = {
-    name = 'Increased',
-    description = 'The value added result',
-    primitive_type = I.primitives.NUMERIC,
+      {
+      name = 'Increased',
+      description = 'The value added result',
+      primitive_type = I.primitives.NUMERIC,
+    }
   },
   fn = function(value, constants)
     return value + constants.value
@@ -82,9 +84,11 @@ I.add('bungle', {
     }
   },
   outlets = {
-    name = 'Resulting',
-    description = 'The resulting value of our misunderstood computation',
-    primitive_type = I.primitives.NUMERIC,
+    {
+      name = 'Resulting',
+      description = 'The resulting value of our misunderstood computation',
+      primitive_type = I.primitives.NUMERIC,
+    }
   },
   fn = function(value, _, prior)
     if prior.A then
