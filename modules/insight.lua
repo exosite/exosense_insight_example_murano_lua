@@ -91,7 +91,7 @@ function Insight.info()
 end
 
 function Insight.listInsights(request)
-  log.debug(to_json(request))
+  -- log.debug(to_json(request))
   local insights = {}
   for k,v in pairs(Insight._functions['*']) do
     v.fn = nil
@@ -114,7 +114,7 @@ function Insight.listInsights(request)
 end
 
 function Insight.infoInsight(request)
-  log.debug(to_json(request))
+  -- log.debug(to_json(request))
   local fin = (request.parameters or {}).fn
   local found = Insight._functions['*'][fin]
   if found == nil then
@@ -129,7 +129,7 @@ function Insight.infoInsight(request)
 end
 
 function Insight.lifecycle(request)
-  log.debug(to_json(request))
+  -- log.debug(to_json(request))
   return {}
 end
 
@@ -194,18 +194,23 @@ local function default_raw_fn(fn, request)
   for _, dp in pairs(dataIN) do
 
     -- gather multiple return values into separate outlets.
-    local outlets = { fn(dp.value, constants, prior) }
+    local status, outlets_or_error = pcall(function()
+      return { fn(dp.value, constants, prior) }
+    end)
+    if status then
+      local outlets = outlets_or_error
 
-    log.debug('OUTLETS', to_json(outlets))
+      -- Each signal value in dataOUT should keep the incoming metadata
+      for k,v in pairs(outlets) do
+        local n = deepcopy(dp)
+        n.value = v
+        outlets[k] = n
+      end
 
-    -- Each signal value in dataOUT should keep the incoming metadata
-    for k,v in pairs(outlets) do
-      local n = deepcopy(dp)
-      n.value = v
-      outlets[k] = n
+      table.insert(dataOUT, outlets)
+    else
+      log.error('FUNCTION EXEC ERROR', (request.args or {}).function_id, outlets_or_error)
     end
-
-    table.insert(dataOUT, outlets)
   end
 
   dataOUT = transpose(dataOUT)
@@ -259,7 +264,7 @@ local function save_outlets(id, outlets)
 end
 
 function Insight.process(request)
-  log.debug(to_json(request))
+  -- log.debug(to_json(request))
   -- Maybe group_id support.
   local gid = (request.args or {}).group_id or '*'
   local fid = (request.args or {}).function_id
