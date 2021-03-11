@@ -180,7 +180,10 @@ local function default_raw_fn(fn, request)
 
   dataOUT = transpose(dataOUT)
 
-  return setmetatable({dataOUT}, {['__type']='slice'})
+  for _,t in pairs(dataOUT) do
+    setmetatable(t, {['__type']='slice'})
+  end
+  return setmetatable(dataOUT, {['__type']='slice'})
 end
 
 local function save_inlets(id, data)
