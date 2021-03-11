@@ -195,6 +195,9 @@ local function default_raw_fn(fn, request)
 
     -- gather multiple return values into separate outlets.
     local outlets = { fn(dp.value, constants, prior) }
+
+    log.debug('OUTLETS', to_json(outlets))
+
     -- Each signal value in dataOUT should keep the incoming metadata
     for k,v in pairs(outlets) do
       local n = deepcopy(dp)

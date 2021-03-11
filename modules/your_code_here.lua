@@ -27,14 +27,19 @@ I.add('adder', {
     }
   },
   outlets = {
-      {
+    {
       name = 'Increased',
       description = 'The value added result',
+      primitive_type = I.primitives.NUMERIC,
+    },
+    {
+      name = 'Original',
+      description = 'The original value',
       primitive_type = I.primitives.NUMERIC,
     }
   },
   fn = function(value, constants)
-    return value + constants.value
+    return value + constants.value, value
   end
 })
 
