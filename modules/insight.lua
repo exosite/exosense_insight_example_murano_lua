@@ -146,7 +146,7 @@ local function query_prior(id)
   local result = Tsdb.query(query)
   local ret = {}
   for k,v in pairs(result.values or {}) do
-    local n = string.gsub(k, '_(.)$', '%1')
+    local n = string.gsub(k, '^(.*)_(.)$', '%2')
     local vv = (v[1] or {})[2]
     if vv then
       ret[n] = vv
