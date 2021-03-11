@@ -133,7 +133,7 @@ end
 local function query_prior(id)
   local metric_names = {}
   local lid = string.gsub(id, '[^%w_]', '')
-  for _,v in pairs({'A', 'B', 'C', 'D', 'E', '0', '1', '2', '3', '4'}) do
+  for _,v in pairs({'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5'}) do
     table.insert(metric_names, lid .. '_' .. v)
   end
   local query = {
@@ -213,7 +213,7 @@ local function save_outlets(id, outlets)
     }
     for _,sd in pairs(outlet) do
       ow.ts = sd.ts
-      ow[lid .. '_' .. tostring(idx)] = sd.value
+      ow.metrics[lid .. '_' .. tostring(idx)] = sd.value
       -- Just overwrite multiples. should all be same anyhow.
     end
     table.insert(towrite, ow)
