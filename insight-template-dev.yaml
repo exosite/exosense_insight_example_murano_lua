@@ -9,7 +9,7 @@ info:
     name: Your Name Here
     email: YOU@BIZ.com
 
-host: simpleinsightmodule.apps.exosite-staging.io
+host: simpleinsightservice.apps.dev1.murano.exosite-dev.com
 basePath: / # Set this or the path according to your function
 tags:
   - name: insight
@@ -90,7 +90,7 @@ paths:
         default:
           description: The response to this is ignored.
 
-  /process: # The actual path can be anything.
+  /process: # The acutal path can be anything.
     post:
       operationId: process
       description: |
@@ -112,7 +112,7 @@ paths:
             $ref: "#/definitions/SignalDataArrayArray"
         default:
           description: Error that stops the pipeline.
-            Non-fatal errors should produce new signals on a separate outlet.
+            Non-fatal errors should produce new signals on a seperate outlet.
           schema:
             $ref: '#/definitions/ErrorResponse'
 

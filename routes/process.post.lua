@@ -2,4 +2,4 @@
 -- luacheck: globals response request
 -- process
 
-return require('insight').process(request)
+return require('insight').process(request.body)
