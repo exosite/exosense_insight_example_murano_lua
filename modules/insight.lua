@@ -60,7 +60,7 @@ end
 
 function Insight.add(function_id, function_details)
   -- oh lua; make sure arrays are arrays for to_json
-  for _,k in pairs({'constants', 'inlets', 'outlets'}) do 
+  for _,k in pairs({'constants', 'inlets', 'outlets'}) do
     if function_details[k] then
       setmetatable(function_details[k], {['__type']='slice'})
     else
@@ -211,7 +211,9 @@ local function save_inlets(id, data)
     })
   end
 
-  Tsdb.multiWrite({datapoints=towrite})
+  if next(towrite) ~= nil then
+    Tsdb.multiWrite({datapoints=towrite})
+  end
 end
 
 local function save_outlets(id, outlets)
@@ -228,10 +230,14 @@ local function save_outlets(id, outlets)
       ow.metrics[lid .. '_' .. tostring(idx)] = sd.value
       -- Just overwrite multiples. should all be same anyhow.
     end
-    table.insert(towrite, ow)
+    if next(ow.metrics) ~= nil then
+      table.insert(towrite, ow)
+    end
   end
 
-  Tsdb.multiWrite({datapoints=towrite})
+  if next(towrite) ~= nil then
+    Tsdb.multiWrite({datapoints=towrite})
+  end
 end
 
 function Insight.process(request)
