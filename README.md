@@ -12,7 +12,7 @@ action capabilities. Correspondingly, there are two types of Insights:
 
 ### Streaming
 
-Fundamentally, all Insights are streaming based. This is also more widely known as an 
+Fundamentally, all Insights are streaming based. This is also more widely known as an
 [Online Algorithm](https://en.wikipedia.org/wiki/Online_algorithm).
 
 * At their core, Insights are not stateful; similar to other
@@ -39,21 +39,21 @@ Click on `Modules`, then on `your_code_here`.
 
 Add your logic.
 
-#### Publish Your Exchange Insight Element
+### Publish Your Exchange Insight Element
 
 * In Murano, go to IoT Marketplace and click on Publish on the left
 * Parameters:
   * Element name: Recommend including 'Insight' in the name.
   * Element type: Service
   * Element Variation: ExoSense Insight
-  * Configuration File (YAML) URL: https://`<`the domain of your application`>`/interface
+  * Configuration File (YAML) URL: `https://<the domain of your application>/interface`
   * ... (fill the rest out as you see fit)
 
-#### Add Insight To Business
+### Add Insight To Business
 
 Go to the Element you created in IoT Marketplace and add it to your Murano Business.
 
-#### Add Insight To ExoSense
+### Add Insight To ExoSense
 
 Go to the ExoSense instance Solution in Murano, and click the orange "Enable
 Services" button at the top right. Find the Service you just created and enable
