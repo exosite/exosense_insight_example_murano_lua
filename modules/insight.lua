@@ -210,6 +210,7 @@ local function default_raw_fn(fn, request)
       table.insert(dataOUT, outlets)
     else
       log.error('FUNCTION EXEC ERROR', (request.args or {}).function_id, outlets_or_error)
+      table.insert(dataOUT, {})
     end
   end
 
