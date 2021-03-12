@@ -166,18 +166,26 @@ local function query_prior(id)
   local query = {
     mode = 'split',
     epoch = 'u',
-    limit = 1,
+    limit = 4,
     metrics = metric_names,
     relative_start = '-999w',
   }
   local result = Tsdb.query(query)
-  local ret = {}
+  local ret = {
+    prior = {}
+  }
   for k,v in pairs(result.values or {}) do
     local n = string.gsub(k, '^(.*)_(.)$', '%2')
     local vv = (v[1] or {})[2]
     if vv then
       ret[n] = vv
     end
+    ret.prior[n] = v
+  end
+
+  -- Also map 1..5 from "1".."5", making it easier for developers.
+  for i,k in ipairs({'1', '2', '3', '4', '5'}) do
+    ret[i] = ret[k]
   end
   return ret
 end
