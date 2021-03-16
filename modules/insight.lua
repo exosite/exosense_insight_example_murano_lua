@@ -244,9 +244,13 @@ local function default_raw_fn(fn, request)
 
       -- Each signal value in dataOUT should keep the incoming metadata
       for k,v in pairs(outlets) do
-        local n = deepcopy(dp)
-        n.value = v
-        outlets[k] = n
+        if json.is_null(v) then
+          outlets[k] = json.null
+        else
+          local n = deepcopy(dp)
+          n.value = v
+          outlets[k] = n
+        end
       end
 
       table.insert(dataOUT, outlets)
@@ -260,6 +264,11 @@ local function default_raw_fn(fn, request)
 
   for _,t in pairs(dataOUT) do
     setmetatable(t, {['__type']='slice'})
+    for i,v in pairs(t) do
+      if json.is_null(v) then
+        table.remove(t, i)
+      end
+    end
   end
   return setmetatable(dataOUT, {['__type']='slice'})
 end
