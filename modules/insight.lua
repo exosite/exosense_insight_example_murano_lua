@@ -190,13 +190,47 @@ local function query_prior(id)
   return ret
 end
 
+local function save_state(id, state)
+  local json = to_json(state)
+  local lid = string.gsub(id, '[^%w_]', '') .. '_state'
+  Tsdb.write({
+    metrics = {
+      [lid] = json
+    }
+  })
+end
+
+local function retrive_state(id)
+  local lid = string.gsub(id, '[^%w_]', '') .. '_state'
+  local query = {
+    mode = 'split',
+    epoch = 'u',
+    limit = 1,
+    metrics = {lid},
+    relative_start = '-999w',
+  }
+  local result = Tsdb.query(query)
+  local json = (((result.values or {})[lid] or {})[1] or {})[2] or "{}"
+  local tbl = from_json(json)
+  return tbl
+end
+
 -- This handles single inlet, multiple outlet insight functions.
 local function default_raw_fn(fn, request)
   local dataIN = request.data
   local constants = request.args.constants
   local dataOUT = {}
 
-  local prior = query_prior(request.id or '_')
+  local rid = request.id or '_'
+  local prior = query_prior(rid)
+  prior._f = {
+    save = function(state)
+      return save_state(rid, state)
+    end,
+    restore = function()
+      return retrive_state(rid)
+    end
+  }
 
   -- dataIN is a list of data points
   for _, dp in pairs(dataIN) do

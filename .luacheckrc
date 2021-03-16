@@ -2,7 +2,6 @@ std = 'lua51'
 globals = {
 	-- Murano Globals for all scripts
 	'Asset',
-	'Bulknotify',
 	'Config',
 	'Content',
 	'Device',
@@ -10,7 +9,6 @@ globals = {
 	'Http',
 	'Keystore',
 	'Postgresql',
-	'Renderer',
 	'Scripts',
 	'Spms',
 	'table',
@@ -21,6 +19,7 @@ globals = {
 	'Websocket',
 	'context',
 	'from_json',
+	'json',
 	'log',
 	'murano',
 	'os.now',
