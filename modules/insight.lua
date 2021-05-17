@@ -302,7 +302,7 @@ local function save_outlets(id, outlets)
     }
     for _,sd in pairs(outlet) do
       ow.ts = sd.ts
-      ow.metrics[lid .. '_' .. tostring(idx)] = sd.value
+      ow.metrics[lid .. '_' .. tostring(idx)] = type(sd.value) == 'table' and json.stringify(sd.value) or sd.value
       -- Just overwrite multiples. should all be same anyhow.
     end
     if next(ow.metrics) ~= nil then

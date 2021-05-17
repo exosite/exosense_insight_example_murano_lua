@@ -9,6 +9,7 @@ tags
 .murano/
 .env
 .jiramulerc
+.vscode/
 
 luacov.*.out*
 modules/doc
