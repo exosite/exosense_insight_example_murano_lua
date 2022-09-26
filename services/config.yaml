@@ -1,2 +1,2 @@
 auto_update: false
-reuse_vm: true
+reuse_vm: false
